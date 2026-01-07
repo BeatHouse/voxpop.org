@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Voxpop International School</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* ===== RESET ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #f9fafb;
+      background: radial-gradient(circle at top left, #1f2937 0, #020617 50%, #000 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== ANIMATED BACKGROUND ===== */
+    .bg-orbit {
+      position: fixed;
+      inset: -50%;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(59,130,246,0.45), transparent 60%),
+        radial-gradient(circle at 90% 10%, rgba(244,114,182,0.45), transparent 60%),
+        radial-gradient(circle at 0% 100%, rgba(34,197,94,0.45), transparent 55%);
+      filter: blur(40px);
+      opacity: 0.8;
+      z-index: -2;
+      animation: floatBg 18s ease-in-out infinite alternate;
+    }
+    @keyframes floatBg {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(10px, -20px, 0) scale(1.05); }
+      100% { transform: translate3d(-20px, 15px, 0) scale(1.03); }
+    }
+
+    /* Cursor spotlight */
+    .cursor-glow {
+      position: fixed;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: 0;
+      transition: opacity 0.3s ease-out;
+      z-index: -1;
+    }
+
+    /* ===== LAYOUT ===== */
+    .page {
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 20px 18px 50px;
+    }
+
+    /* ===== NAVBAR ===== */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      margin-bottom: 24px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(148,163,184,0.35);
+      backdrop-filter: blur(18px);
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+    }
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #38bdf8, #4f46e5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      color: #e5f0ff;
+      box-shadow: 0 0 20px rgba(59,130,246,0.7);
+    }
+    .nav-title {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+    .nav-title span:nth-child(1) {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+    }
+    .nav-title span:nth-child(2) {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: #d1d5db;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: inherit;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: 0.2s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+    .nav-links a::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(248,250,252,0.18), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.2s ease-out;
+    }
+    .nav-links a:hover::before {
+      opacity: 1;
+    }
+    .nav-links a:hover {
+      color: #f9fafb;
+      border-color: rgba(148,163,184,0.4);
+      transform: translateY(-1px);
+    }
+    .nav-links .pill-primary {
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      color: #f9fafb;
+      border: none;
+      box-shadow: 0 0 14px rgba(56,189,248,0.65);
+    }
+    .nav-links .pill-primary:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 0 20px rgba(56,189,248,0.9);
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 3.2fr) minmax(0, 2.6fr);
+      gap: 28px;
+      margin-top: 18px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 840px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .hero-left {
+      padding: 22px 22px 20px;
+      border-radius: 26px;
+      background: radial-gradient(circle at 0 0, rgba(248,250,252,0.08), transparent 55%),
+                  rgba(15,23,42,0.88);
+      border: 1px solid rgba(148,163,184,0.4);
+      box-shadow:
+        0 24px 55px rgba(15,23,42,0.95),
+        inset 0 0 0 0.5px rgba(255,255,255,0.04);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.7);
+      font-size: 11px;
+      color: #e5e7eb;
+      margin-bottom: 10px;
+    }
+    .hero-pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #22c55e, #16a34a);
+      box-shadow: 0 0 10px rgba(34,197,94,0.9);
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 4vw, 36px);
+      line-height: 1.1;
+      margin-bottom: 10px;
+      letter-spacing: 0.01em;
+    }
+    .hero h1 span.highlight {
+      background: linear-gradient(120deg, #4ade80, #22d3ee, #a855f7);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .hero-sub {
+      font-size: 14px;
+      color: #e5e7eb;
+      max-width: 460px;
+      margin-bottom: 16px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .btn {
+      position: relative;
+      overflow: hidden;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.45);
+      padding: 9px 18px;
+      font-size: 13px;
+      cursor: pointer;
+      background: rgba(15,23,42,0.9);
+      color: #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: transform 0.18s ease-out, box-shadow 0.2s ease-out, border-color 0.18s;
+    }
+    .btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(248,250,252,0.28), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.25s ease-out;
+    }
+    .btn:hover::before {
+      opacity: 1;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(209,213,219,0.85);
+      box-shadow: 0 16px 35px rgba(15,23,42,0.9);
+    }
+    .btn-primary {
+      background: radial-gradient(circle at 0 0, rgba(248,250,252,0.1), transparent 55%),
+                  linear-gradient(135deg, #4f46e5, #06b6d4);
+      border: none;
+      color: #f9fafb;
+      box-shadow: 0 0 18px rgba(56,189,248,0.8);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 0 26px rgba(59,130,246,1);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .hero-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .hero-right {
+      position: relative;
+    }
+    .hero-card {
+      border-radius: 24px;
+      padding: 16px 16px 18px;
+      background: radial-gradient(circle at 100% 0, rgba(248,250,252,0.12), transparent 55%),
+                  rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.5);
+      box-shadow:
+        0 20px 50px rgba(15,23,42,0.95),
+        inset 0 0 0 0.5px rgba(255,255,255,0.04);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow: hidden;
+    }
+    .hero-badge-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .stat-card {
+      border-radius: 16px;
+      padding: 9px 8px;
+      background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(17,24,39,0.9));
+      border: 1px solid rgba(148,163,184,0.5);
+      font-size: 11px;
+      color: #e5e7eb;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.18s ease-out, box-shadow 0.2s ease-out, border-color 0.18s;
+      cursor: default;
+    }
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at 0 0, rgba(59,130,246,0.28), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.25s ease-out;
+    }
+    .stat-card:hover::after {
+      opacity: 1;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(191,219,254,0.9);
+      box-shadow: 0 14px 30px rgba(15,23,42,0.9);
+    }
+    .stat-label {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-bottom: 3px;
+    }
+    .stat-value {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .stat-sub {
+      font-size: 10px;
+      color: #a5b4fc;
+    }
+
+    .hero-timeline {
+      margin-top: 4px;
+      border-radius: 18px;
+      padding: 10px 11px;
+      background: radial-gradient(circle at 0 100%, rgba(248,250,252,0.14), transparent 55%),
+                  rgba(15,23,42,0.95);
+      border: 1px dashed rgba(148,163,184,0.6);
+      font-size: 11px;
+      color: #e5e7eb;
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.4fr);
+      gap: 10px;
+    }
+    @media (max-width: 480px) {
+      .hero-timeline {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    .timeline-label {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .timeline-line {
+      margin-top: 4px;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #eab308, #f97316);
+      position: relative;
+      overflow: hidden;
+    }
+    .timeline-line::before {
+      content: "";
+      position: absolute;
+      width: 28%;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(248,250,252,0.9), transparent);
+      animation: shimmer 1.5s linear infinite;
+    }
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(350%); }
+    }
+
+    /* ===== SECTIONS ===== */
+    .section {
+      margin-top: 26px;
+      padding: 20px 18px;
+      border-radius: 20px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.4);
+      box-shadow: 0 18px 40px rgba(15,23,42,0.95);
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .section-sub {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    @media (max-width: 880px) {
+      .grid-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 640px) {
+      .grid-3 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      border-radius: 16px;
+      padding: 12px 11px;
+      background: radial-gradient(circle at 0 0, rgba(248,250,252,0.07), transparent 55%),
+                  rgba(15,23,42,0.95);
+      border: 1px solid rgba(148,163,184,0.5);
+      font-size: 13px;
+      color: #e5e7eb;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
+      cursor: default;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(191,219,254,0.95);
+      box-shadow: 0 18px 35px rgba(15,23,42,0.95);
+    }
+    .card-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    .card-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: #a5b4fc;
+      margin-bottom: 6px;
+    }
+    .card-tag-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #38bdf8;
+    }
+    .card p {
+      font-size: 12px;
+      color: #d1d5db;
+    }
+
+    /* ===== CONTACT SECTION ===== */
+    .contact-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 2fr);
+      gap: 18px;
+    }
+    @media (max-width: 780px) {
+      .contact-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    .contact-info {
+      font-size: 13px;
+      color: #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .contact-info b {
+      color: #e5e7eb;
+    }
+
+    .contact-form {
+      border-radius: 16px;
+      padding: 12px 12px 14px;
+      background: radial-gradient(circle at 100% 0, rgba(248,250,252,0.08), transparent 55%),
+                  rgba(15,23,42,0.95);
+      border: 1px solid rgba(148,163,184,0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .contact-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    @media (max-width: 540px) {
+      .contact-row {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    label {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
+    input, textarea, select {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.95);
+      color: #e5e7eb;
+      padding: 7px 8px;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.18s ease-out, box-shadow 0.18s ease-out, background 0.18s;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: rgba(129,140,248,1);
+      box-shadow: 0 0 0 1px rgba(129,140,248,0.7);
+      background: rgba(15,23,42,0.98);
+    }
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+    .contact-note {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .contact-success {
+      display: none;
+      font-size: 11px;
+      color: #4ade80;
+      margin-left: 4px;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      margin-top: 16px;
+      font-size: 11px;
+      color: #6b7280;
+      text-align: center;
+    }
+    footer a {
+      color: #a5b4fc;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-orbit"></div>
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <div class="page">
+    <!-- NAVBAR -->
+    <nav class="nav">
+      <div class="nav-left">
+        <div class="logo-circle">V</div>
+        <div class="nav-title">
+          <span>Voxpop International School</span>
+          <span>Hyderabad · Nursery – Grade 10</span>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#academics">Academics</a>
+        <a href="#facilities">Campus</a>
+        <a href="#contact">Contact</a>
+        <a href="admissions.html" class="pill-primary">Admissions</a>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-left" id="about">
+        <div class="hero-pill">
+          <span class="hero-pill-dot"></span>
+          Admissions for 2026–27 now open
+        </div>
+        <h1>
+          A <span class="highlight">future‑ready</span> school for curious, confident learners.
+        </h1>
+        <p class="hero-sub">
+          Voxpop International School blends strong academics, life skills, and tech‑enabled classrooms so every student feels seen, supported, and ready for tomorrow.
+        </p>
+        <div class="hero-actions">
+          <a href="admissions.html" class="btn btn-primary">
+            Apply / Enquire
+            <span>↗</span>
+          </a>
+          <a href="#contact" class="btn">
+            Book a Campus Visit
+          </a>
+        </div>
+        <div class="hero-meta">
+          <span><span class="pill-dot"></span> CBSE‑aligned curriculum</span>
+          <span>10+ years of academic excellence</span>
+          <span>Safe, supportive learning environment</span>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="hero-card">
+          <div class="hero-badge-row">
+            <span>Life at Voxpop</span>
+            <span>Hyderabad · Telangana</span>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-card">
+              <div class="stat-label">Student–teacher focus</div>
+              <div class="stat-value">Small</div>
+              <div class="stat-sub">Personal attention in every class</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Grades offered</div>
+              <div class="stat-value">Nur–10</div>
+              <div class="stat-sub">Strong foundation to board exams</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Campus life</div>
+              <div class="stat-value">Active</div>
+              <div class="stat-sub">Clubs · Sports · Events</div>
+            </div>
+          </div>
+
+          <div class="hero-timeline">
+            <div>
+              <div class="timeline-label">A day at Voxpop</div>
+              <div>Balanced schedule with academics, activities, and guided self‑study so students grow in confidence, not just marks.</div>
+            </div>
+            <div>
+              <div class="timeline-label">Why parents choose us</div>
+              <div class="timeline-line"></div>
+              <div style="margin-top:6px;">
+                Transparent communication, caring teachers, and consistent results help parents feel their child is in the right hands.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACADEMICS -->
+    <section class="section" id="academics">
+      <div class="section-header">
+        <h2 class="section-title">Academics & Programs</h2>
+        <p class="section-sub">
+          Strong fundamentals, clear concepts, and exam‑ready preparation with room for creativity.
+        </p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">Foundational years</div>
+          <div class="card-tag">
+            <span class="card-tag-dot"></span>
+            Nursery – Grade 2
+          </div>
+          <p>
+            Play‑based learning, phonics, early numeracy, and activity rooms that make school exciting for our youngest learners.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-title">Middle school</div>
+          <div class="card-tag">
+            <span class="card-tag-dot"></span>
+            Grades 3 – 7
+          </div>
+          <p>
+            Concept‑driven teaching in Math, Science, Languages, and Social Studies with projects, labs, and presentations.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-title">High school (Board focus)</div>
+          <div class="card-tag">
+            <span class="card-tag-dot"></span>
+            Grades 8 – 10
+          </div>
+          <p>
+            Exam‑oriented preparation, regular tests, doubt‑clearing, and mentoring to guide students towards strong board results.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAMPUS & FACILITIES -->
+    <section class="section" id="facilities">
+      <div class="section-header">
+        <h2 class="section-title">Campus & Facilities</h2>
+        <p class="section-sub">
+          Safe, organised, and tech‑enabled spaces that support how students learn, play, and grow.
+        </p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">Digital classrooms</div>
+          <div class="card-tag">
+            <span class="card-tag-dot"></span>
+            Smart learning
+          </div>
+          <p>
+            Smart boards and curated digital content to make complex topics visual, interactive, and easier to remember.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-title">Science & Computer labs</div>
+          <div class="card-tag">
+            <span class="card-tag-dot"></span>
+            Hands‑on learning
+          </div>
+          <p>
+            Well‑equipped labs where students experiment, code, and explore STEM concepts beyond the textbook.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-title">Sports & activities</div>
+          <div class="card-tag">
+            <span class="card-tag-dot"></span>
+            Whole‑child focus
+          </div>
+          <p>
+            Indoor and outdoor games, competitions, and cultural events to build teamwork, discipline, and confidence.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section" id="contact">
+      <div class="section-header">
+        <h2 class="section-title">Contact & Visit</h2>
+        <p class="section-sub">
+          Have questions or want to see the campus? Share your details and the school team will connect with you.
+        </p>
+      </div>
+
+      <div class="contact-layout">
+        <div class="contact-info">
+          <p><b>Address</b><br>
+            Voxpop International School, Hyderabad, Telangana, India.
+          </p>
+          <p><b>Timings</b><br>
+            Monday – Saturday · 8:30 AM to 3:30 PM
+          </p>
+          <p><b>Phone</b><br>
+            +91‑XXXXXXXXXX (replace with school number)
+          </p>
+          <p><b>Email</b><br>
+            info@voxpopinternationalschool.com (sample – update if needed)
+          </p>
+          <p class="contact-note">
+            Tip: In a real deployment, this form can send emails or save submissions in a sheet.
+            For school project demo, it will show a success message.
+          </p>
+        </div>
+
+        <form class="contact-form" id="contactForm">
+          <div class="contact-row">
+            <div>
+              <label for="parentName">Parent / Guardian name</label>
+              <input id="parentName" required placeholder="Enter your name" />
+            </div>
+            <div>
+              <label for="studentName">Student name</label>
+              <input id="studentName" required placeholder="Enter student name" />
+            </div>
+          </div>
+          <div class="contact-row">
+            <div>
+              <label for="grade">Applying for grade</label>
+              <input id="grade" placeholder="Eg: Grade 5" />
+            </div>
+            <div>
+              <label for="phone">Phone number</label>
+              <div style="display:flex;gap:6px;">
+                <select id="countryCode">
+                  <option value="+91">🇮🇳 +91</option>
+                  <option value="+971">🇦🇪 +971</option>
+                  <option value="+1">🇺🇸 +1</option>
+                  <option value="+44">🇬🇧 +44</option>
+                  <option value="+61">🇦🇺 +61</option>
+                </select>
+                <input id="phone" type="tel" required placeholder="10‑digit number"
+                       maxlength="10"
+                       pattern="[0-9]{10}"
+                       style="flex:1;" />
+              </div>
+            </div>
+          </div>
+          <div>
+            <label for="message">Message / Query</label>
+            <textarea id="message" placeholder="Share any questions about admissions or school."></textarea>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+            <button type="submit" class="btn btn-primary">Submit enquiry</button>
+            <span id="contactSuccess" class="contact-success">
+              Your form has been submitted successfully. You will be contacted as soon as possible.
+            </span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <footer>
+      © Voxpop International School · Student project website
+    </footer>
+  </div>
+
+  <script>
+    // Cursor glow / spotlight
+    const glow = document.getElementById("cursorGlow");
+    document.addEventListener("pointermove", (e) => {
+      glow.style.opacity = 1;
+      glow.style.transform = `translate3d(${e.clientX - 130}px, ${e.clientY - 130}px, 0)`;
+    });
+    document.addEventListener("pointerleave", () => {
+      glow.style.opacity = 0;
+    });
+
+    // Smooth scroll for internal links
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener("click", (e) => {
+        const href = link.getAttribute("href");
+        if (!href || href === "#") return;
+        const target = document.querySelector(href);
+        if (!target) return;
+        e.preventDefault();
+        window.scrollTo({
+          top: target.offsetTop - 80,
+          behavior: "smooth",
+        });
+      });
+    });
+
+    // Limit phone to digits and 10 characters
+    const phoneInput = document.getElementById("phone");
+    phoneInput.addEventListener("input", () => {
+      phoneInput.value = phoneInput.value.replace(/[^0-9]/g, "").slice(0, 10);
+    });
+
+    // Contact form demo submit
+    const contactForm = document.getElementById("contactForm");
+    const contactSuccess = document.getElementById("contactSuccess");
+    contactForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      contactSuccess.style.display = "inline";
+      setTimeout(() => {
+        contactSuccess.style.display = "none";
+      }, 3500);
+      contactForm.reset();
+    });
+  </script>
+</body>
+</html>
